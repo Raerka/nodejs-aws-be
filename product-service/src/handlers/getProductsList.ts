@@ -16,7 +16,7 @@ export const getProductsList: APIGatewayProxyHandler = async () => {
     };
   } catch (err) {
     return {
-      statusCode: err,
+      statusCode: 500,
       body: 'Internal Server Error',
     };
   }
