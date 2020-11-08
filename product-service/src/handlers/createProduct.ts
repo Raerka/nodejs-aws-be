@@ -20,6 +20,13 @@ export const createProduct: APIGatewayProxyHandler = async event => {
       },
     };
   } catch (err) {
+    if (err.message === 'Validation Error') {
+      return {
+        statusCode: 400,
+        body: 'Validation Error',
+      };
+    }
+
     return {
       statusCode: 500,
       body: 'Internal Server Error',

@@ -12,7 +12,7 @@ export function validateProductSchema(product: Product) {
   const { error, value } = productSchema.validate(product);
 
   if (error) {
-    throw new Error(error.message);
+    throw new Error('Validation Error');
   }
 
   return value;
