@@ -1,8 +1,8 @@
 const path = require('path');
 const slsw = require('serverless-webpack');
 const nodeExternals = require('webpack-node-externals');
-const CopyPlugin = require('copy-webpack-plugin');
-const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+// const CopyPlugin = require('copy-webpack-plugin');
+// const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
 module.exports = {
   context: __dirname,
@@ -41,20 +41,20 @@ module.exports = {
       },
     ],
   },
-  plugins: [
-    new CopyPlugin({
-      patterns: [
-        {
-          from: path.resolve(__dirname, 'src/service/data', 'productList.json'),
-          to: 'data',
-        },
-      ],
-    }),
+  // plugins: [
+  //   new CopyPlugin({
+  //     patterns: [
+  //       {
+  //         from: path.resolve(__dirname, 'src/service/data', 'productList.json'),
+  //         to: 'data',
+  //       },
+  //     ],
+  //   }),
     // new ForkTsCheckerWebpackPlugin({
     //   eslint: true,
     //   eslintOptions: {
     //     cache: true
     //   }
     // })
-  ],
+  // ],
 };

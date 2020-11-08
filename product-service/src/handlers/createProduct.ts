@@ -1,17 +1,19 @@
 import 'source-map-support/register';
 import { APIGatewayProxyHandler } from 'aws-lambda';
-import { getAllProducts } from '../services/productService';
+import { createProductInDB } from '../services/productService';
+import { Product } from '../models/Product';
 import { logLambdaRequest } from '../services/utils/logger.utils';
 
-export const getProductsList: APIGatewayProxyHandler = async event => {
+export const createProduct: APIGatewayProxyHandler = async event => {
   logLambdaRequest(event);
 
   try {
-    const products = await getAllProducts();
+    const product: Product = JSON.parse(event.body);
+    const createdProduct = await createProductInDB(product);
 
     return {
       statusCode: 200,
-      body: JSON.stringify(products),
+      body: JSON.stringify(createdProduct),
       headers: {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Credentials': true,
