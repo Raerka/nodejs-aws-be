@@ -49,6 +49,18 @@ const serverlessConfiguration: Serverless = {
         },
       ],
     },
+    createProduct: {
+      handler: 'handler.createProduct',
+      events: [
+        {
+          http: {
+            method: 'post',
+            path: 'products',
+            cors: true,
+          },
+        },
+      ],
+    },
   },
 };
 

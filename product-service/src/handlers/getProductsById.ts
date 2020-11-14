@@ -1,9 +1,12 @@
 import 'source-map-support/register';
 import { APIGatewayProxyHandler } from 'aws-lambda';
-import { getProductById } from '../service/productService';
+import { getProductById } from '../services/productService';
+import { logLambdaRequest } from '../services/utils/logger.utils';
 
 export const getProductsById: APIGatewayProxyHandler = async event => {
-    try {
+  logLambdaRequest(event);
+
+  try {
       const { productId } = event.pathParameters;
       const product = await getProductById(productId);
 
@@ -17,8 +20,8 @@ export const getProductsById: APIGatewayProxyHandler = async event => {
       };
     } catch (err) {
       return {
-        statusCode: 404,
-        body: 'Product was not found',
+        statusCode: 500,
+        body: 'Internal Server Error',
       };
     }
   };
