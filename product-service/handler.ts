@@ -1,3 +1,1 @@
-export { getProductsList } from './src/handlers';
-export { getProductsById } from './src/handlers';
-export { createProduct } from './src/handlers';
+export { getProductsList, getProductsById, createProduct } from './src/handlers';
