@@ -10,7 +10,6 @@ export const importFileParser = async event => {
     const S3_BUCKET_NAME = process.env.S3_BUCKET_NAME;
     const s3 = new AWS.S3({ region: 'eu-west-1' });
 
-
     for (const record of event.Records) {
       const { key } = record.s3.object;
       console.log(key);
