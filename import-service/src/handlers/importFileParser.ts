@@ -1,6 +1,7 @@
 import 'source-map-support/register';
 import * as AWS from 'aws-sdk';
-const csv = require('csv-parser');
+// @ts-ignore
+import csvParser from 'csv-parser';
 
 export const importFileParser = async event => {
   console.log('Event:', event);
@@ -9,41 +10,54 @@ export const importFileParser = async event => {
     const S3_BUCKET_NAME = process.env.S3_BUCKET_NAME;
     const s3 = new AWS.S3({ region: 'eu-west-1' });
 
+
     for (const record of event.Records) {
       const { key } = record.s3.object;
       console.log(key);
 
-      s3.getObject({
+      await new Promise((resolve, reject) => {
+        s3.getObject({
+          Bucket: S3_BUCKET_NAME,
+          Key: key,
+        })
+          .createReadStream()
+          .on('error', error => {
+            reject(error);
+            console.log('Error:', error);
+          })
+          .pipe(csvParser())
+          .on('open', () => {
+            console.log(`Parsing file ${key}`);
+          })
+          .on('data', data => {
+            console.log('Parsed data:', data);
+          })
+          .on('error', error => {
+            reject(error);
+            console.log('Error:', error);
+          })
+          .on('end', async () => {
+            console.log('Finish callback');
+            resolve();
+          });
+      });
+
+      console.log(`Moving from ${S3_BUCKET_NAME}/${key}`);
+      const newKey = key.replace('uploaded', 'parsed');
+
+      await s3.copyObject({
+        Bucket: S3_BUCKET_NAME,
+        CopySource: `${S3_BUCKET_NAME}/${key}`,
+        Key: newKey,
+      }).promise();
+
+      await s3.deleteObject({
         Bucket: S3_BUCKET_NAME,
         Key: key,
-      })
-        .createReadStream()
-        .pipe(csv())
-        .on('open', () => console.log(`Parsing file ${key}`))
-        .on('data', data => console.log('Parsed data:', data))
-        .on('error', error => {
-          console.log('Error:', error);
-        })
-        .on('end', async () => {
-          console.log(`Moving from ${S3_BUCKET_NAME}/${key}`);
-          const newKey = key.replace('uploaded', 'parsed');
+      }).promise();
 
-          await s3.copyObject({
-            Bucket: S3_BUCKET_NAME,
-            CopySource: `${S3_BUCKET_NAME}/${key}`,
-            Key: newKey,
-          }).promise();
-
-          await s3.deleteObject({
-            Bucket: S3_BUCKET_NAME,
-            Key: key,
-          }).promise();
-
-          console.log(`Moved to ${S3_BUCKET_NAME}/${newKey}`);
-        });
+      console.log(`Moved to ${S3_BUCKET_NAME}/${newKey}`);
     }
-
-    console.log('Finish');
 
     return {
       statusCode: 200,
