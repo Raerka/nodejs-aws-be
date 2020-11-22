@@ -14,7 +14,8 @@
     "csv-parser": "^2.3.3",
     "joi": "^17.3.0",
     "pg": "^8.4.2",
-    "source-map-support": "^0.5.10"
+    "source-map-support": "^0.5.10",
+    "serverless-dotenv-plugin": "^3.1.0"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.17",

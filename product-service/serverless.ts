@@ -11,8 +11,10 @@ const serverlessConfiguration: Serverless = {
       includeModules: true,
     },
   },
-  // Add the serverless-webpack plugin
-  plugins: ['serverless-webpack'],
+  plugins: [
+    'serverless-webpack',
+    'serverless-dotenv-plugin',
+  ],
   provider: {
     name: 'aws',
     runtime: 'nodejs12.x',
@@ -22,6 +24,50 @@ const serverlessConfiguration: Serverless = {
     },
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
+      PG_HOST: process.env.PG_HOST,
+      PG_PORT: process.env.PG_PORT,
+      PG_DATABASE: process.env.PG_DATABASE,
+      PG_USERNAME: process.env.PG_USERNAME,
+      PG_PASSWORD: process.env.PG_PASSWORD,
+      SNS_TOPIC: {
+        'Ref': 'SNSTopic',
+      },
+    },
+    iamRoleStatements: [
+      {
+        Effect: 'Allow',
+        Action: 'sns:*',
+        Resource: {
+          'Ref': 'SNSTopic',
+        },
+      },
+    ],
+
+  },
+  resources: {
+    Resources: {
+      SQSQueue: {
+        Type: 'AWS::SQS::Queue',
+        Properties: {
+          QueueName: 'catalogItemsQueue',
+        },
+      },
+      SNSTopic: {
+        Type: 'AWS::SNS::Topic',
+        Properties: {
+          TopicName: 'createProductTopic',
+        },
+      },
+      SNSSubscription: {
+        Type: 'AWS::SNS::Subscription',
+        Properties: {
+          Endpoint: 'andreisantexnik@gmail.com',
+          Protocol: 'email',
+          TopicArn: {
+            'Ref': 'SNSTopic',
+          },
+        },
+      },
     },
   },
   functions: {
@@ -57,6 +103,19 @@ const serverlessConfiguration: Serverless = {
             method: 'post',
             path: 'products',
             cors: true,
+          },
+        },
+      ],
+    },
+    catalogBatchProcess: {
+      handler: 'handler.catalogBatchProcess',
+      events: [
+        {
+          sqs: {
+            batchSize: 5,
+            arn: {
+              'Fn::GetAtt': ['SQSQueue', 'Arn'],
+            },
           },
         },
       ],

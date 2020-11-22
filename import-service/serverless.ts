@@ -25,6 +25,7 @@ const serverlessConfiguration: Serverless = {
     },
     environment: {
       S3_BUCKET_NAME: 'rsapp-uploaded',
+      SQS_URL: 'https://sqs.eu-west-1.amazonaws.com/898792768163/catalogItemsQueue',
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
     },
     iamRoleStatements: [
@@ -37,6 +38,11 @@ const serverlessConfiguration: Serverless = {
         Effect: 'Allow',
         Action: 's3:*',
         Resource: `arn:aws:s3:::rsapp-uploaded/*`,
+      },
+      {
+        Effect: 'Allow',
+        Action: 'sqs:*',
+        Resource: `arn:aws:sqs:eu-west-1:898792768163:catalogItemsQueue`,
       },
     ],
   },
