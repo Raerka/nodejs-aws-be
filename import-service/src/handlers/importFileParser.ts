@@ -10,6 +10,7 @@ export const importFileParser = async event => {
     const S3_BUCKET_NAME = process.env.S3_BUCKET_NAME;
     const s3 = new AWS.S3({ region: 'eu-west-1' });
 
+    const sqs = new AWS.SQS();
 
     for (const record of event.Records) {
       const { key } = record.s3.object;
@@ -29,8 +30,15 @@ export const importFileParser = async event => {
           .on('open', () => {
             console.log(`Parsing file ${key}`);
           })
-          .on('data', data => {
+          .on('data', async data => {
             console.log('Parsed data:', data);
+            await sqs.sendMessage(
+              {
+                QueueUrl: process.env.SQS_URL,
+                MessageBody: JSON.stringify(data),
+              },
+              () => { console.log(`Send Data: ${JSON.stringify(data)} to the SQS Queue`); },
+            );
           })
           .on('error', error => {
             reject(error);
