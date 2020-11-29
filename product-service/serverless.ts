@@ -45,6 +45,18 @@ const serverlessConfiguration: Serverless = {
 
   },
   resources: {
+    Outputs: {
+      SQSQueueUrl: {
+        Value: {
+          'Ref': 'SQSQueue',
+        },
+      },
+      SQSQueueArn: {
+        Value: {
+          'Fn::GetAtt': ['SQSQueue', 'Arn'],
+        },
+      },
+    },
     Resources: {
       SQSQueue: {
         Type: 'AWS::SQS::Queue',
