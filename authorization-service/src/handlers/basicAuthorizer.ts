@@ -4,7 +4,7 @@ import 'source-map-support/register';
 export const basicAuthorizer = async (event, ctx, cb) => {
   console.log('Event:', JSON.stringify(event));
 
-  if (event['type']) {
+  if (event['type'] !== 'TOKEN') {
     cb('Unauthorized');
   }
 
