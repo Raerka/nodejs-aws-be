@@ -31,7 +31,7 @@ export class AppService {
 
     const isCacheEnabled = this.cacheableUrls.includes(originalUrl);
     if (isCacheEnabled) {
-      const cachedData = this.cacheManager.get(originalUrl);
+      const cachedData = await this.cacheManager.get(originalUrl);
       if (cachedData) {
         return cachedData;
       }
