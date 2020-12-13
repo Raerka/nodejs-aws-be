@@ -57,6 +57,11 @@ export class AppService {
         return data;
       } catch (err) {
         console.log(err.message);
+
+        if (err.response) {
+          const { status, data } = err.response;
+          throw new HttpException(data, status);
+        }
         throw new HttpException('Something went wrong', HttpStatus.INTERNAL_SERVER_ERROR);
       }
 

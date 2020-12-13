@@ -7,7 +7,7 @@
   "license": "UNLICENSED",
   "scripts": {
     "eb:init": "eb init --platform node.js --region eu-west-1",
-    "eb:create": "eb create development --single --cname raerka-bff-service",
+    "eb:create": "eb create develop --single --cname raerka-bff-service",
     "prebuild": "rimraf dist",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
