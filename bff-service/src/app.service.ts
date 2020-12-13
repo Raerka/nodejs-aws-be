@@ -27,6 +27,7 @@ export class AppService {
     console.log('body', body);
 
     const serviceUrl = this.services[service];
+    console.log(serviceUrl);
 
     const isCacheEnabled = this.cacheableUrls.includes(originalUrl);
     if (isCacheEnabled) {
@@ -41,10 +42,10 @@ export class AppService {
         const config = {
           url: `${serviceUrl}/${originalUrl.split('/').slice(2).join('/')}`,
           method: method,
-          data: body,
+          ...(Object.keys(body || { }).length > 0 && { data: body}),
         };
 
-        console.log(config);
+        console.log('config', config);
 
         const { data } = await this.httpService.request(config).toPromise();
 
